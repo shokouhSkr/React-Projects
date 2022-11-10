@@ -1,22 +1,20 @@
 import React, { useState } from "react";
-import data from "./data";
-import SingleQuestion from "./Question";
+import Menu from "./Menu";
+import Categories from "./Categories";
+import items from "./data";
 
 function App() {
-  const [questions, setQuestions] = useState(data);
+  const [menuItems, setMenuItems] = useState(items);
 
   return (
-    <main>
-      <section className="container">
+    <main className="container">
+      <section className="menu section">
         <div className="title">
-          <h3>Questions And Answers About Login</h3>
+          <h2>Our menu</h2>
+          <div className="underline"></div>
         </div>
-
-        <section className="info">
-          {questions.map((question) => (
-            <SingleQuestion key={question.id} {...question} />
-          ))}
-        </section>
+        <Categories />
+        <Menu items={menuItems} />
       </section>
     </main>
   );
