@@ -27,6 +27,17 @@ const Review = () => {
     });
   };
 
+  const randomHandler = () => {
+    const randomNumber = Math.floor(Math.random() * people.length);
+
+    // To avoid repetition and basicaaly receiving one number two times at a row (NOT 2 2 2 1 2 0 ...)
+    if (randomNumber === index) return randomNumber + 1;
+    console.log(index);
+
+    // Still need to check the new random number comeing from line above
+    setIndex(checkIndex(randomNumber));
+  };
+
   return (
     <article className="review">
       <div className="img-container">
@@ -50,7 +61,9 @@ const Review = () => {
         </button>
       </div>
 
-      <button className="random-btn">suprise me</button>
+      <button className="random-btn" onClick={randomHandler}>
+        suprise me
+      </button>
     </article>
   );
 };
