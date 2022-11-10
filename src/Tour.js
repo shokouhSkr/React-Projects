@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const Tour = ({ name, info, image, price }) => {
+const Tour = ({ id, name, info, image, price, onDelete }) => {
   const [readMoreMood, setReadMoreMood] = useState(true);
 
   const readMoreHandler = () => {
@@ -20,7 +20,9 @@ const Tour = ({ name, info, image, price }) => {
           {readMoreMood ? `${info.substring(0, 250)}...` : info}
           <button onClick={readMoreHandler}>{readMoreMood ? "read more" : "show less"}</button>
         </p>
-        <button className="delete-btn">not interested</button>
+        <button className="delete-btn" onClick={() => onDelete(id)}>
+          not interested
+        </button>
       </footer>
     </article>
   );
