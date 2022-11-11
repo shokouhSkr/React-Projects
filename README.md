@@ -1,3 +1,5 @@
+# react-projects-7-slider
+
 #### IN ACTION
 
-[Portfolio](https://gatsby-strapi-portfolio-project.netlify.app/)
+[Gatsby-Airtable Project](https://gatsby-airtable-design-project.netlify.app/)

@@ -1,100 +1,74 @@
 import React, { useState, useEffect } from "react";
-import { FaAngleDoubleRight } from "react-icons/fa";
-
-const url = "https://course-api.com/react-tabs-project";
+import { FiChevronRight, FiChevronLeft } from "react-icons/fi";
+import { FaQuoteRight } from "react-icons/fa";
+import data from "./data";
 
 function App() {
-  const [jobs, setJobs] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [value, setValue] = useState(0);
-
-  const fetchJobs = async () => {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error(`${response.status}: ${response.statusText}`);
-
-    const responseData = await response.json();
-
-    setJobs(responseData);
-    setIsLoading(false);
-  };
+  const [people, setPeople] = useState(data);
+  const [index, setIndex] = useState(0);
 
   useEffect(() => {
-    fetchJobs().catch((error) => {
-      setError(error.message);
-      setIsLoading(false);
-    });
-  }, []);
+    const lastIndex = people.length - 1;
 
-  const showCompanyHandler = (newValue) => {
-    setValue(newValue);
+    if (index < 0) setIndex(lastIndex);
+    if (index > lastIndex) setIndex(0);
+  }, [index, people]);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setIndex(index + 1);
+    }, 3000);
+
+    return () => clearInterval(timer);
+  }, [index]);
+
+  const prevViewHandler = () => {
+    setIndex(index - 1);
   };
 
-  if (isLoading) {
-    return (
-      <section className="section loading">
-        <h1>Loading...</h1>
-      </section>
-    );
-  }
-
-  if (error) {
-    return (
-      <section className="section loading">
-        <h1>{error}</h1>
-      </section>
-    );
-  }
-
-  // We wrote it here down, because at first our jobs is an empty array, then we fetch data, now here we can use it
-  const { title, dates, duties, company } = jobs[value];
+  const nextViewHandler = () => {
+    setIndex(index + 1);
+  };
 
   return (
     <section className="section">
       {/* title */}
       <div className="title">
-        <h2>experience</h2>
-        <div className="underline"></div>
+        <h2>
+          <span>/</span>
+          reviews
+        </h2>
       </div>
 
-      <div className="jobs-center">
-        {/* jobs-buttons */}
-        <div className="btn-container">
-          {jobs.map((job, index) => {
-            const { id, company } = job;
+      {/* slider */}
+      <div className="section-center">
+        {people.map((person, indexPerson) => {
+          const { id, image, name, title, quote } = person;
 
-            return (
-              <button
-                key={id}
-                type="button"
-                onClick={() => showCompanyHandler(index)}
-                className={`job-btn ${value === index && "active-btn"}`}
-              >
-                {company}
-              </button>
-            );
-          })}
-        </div>
+          // dynamic style
+          let position = "nextSlide";
+          if (indexPerson === index) position = "activeSlide";
+          if (indexPerson === index - 1 || (index === 0 && indexPerson === people.length - 1))
+            position = "lastSlide";
 
-        {/* jobs-info */}
-        <article className="job-info">
-          <h3>{title}</h3>
-          <h4>{company}</h4>
-          <p className="job-date">{dates}</p>
-          {duties.map((duty, index) => {
-            return (
-              <div key={index} className="job-desc">
-                <FaAngleDoubleRight className="job-icon" />
-                <p>{duty}</p>
-              </div>
-            );
-          })}
-        </article>
+          return (
+            <article key={id} className={position}>
+              <img src={image} alt={name} className="person-img" />
+              <h4>{name}</h4>
+              <p className="title">{title}</p>
+              <p className="text">{quote}</p>
+              <FaQuoteRight className="icon" />
+            </article>
+          );
+        })}
+
+        <button className="prev" onClick={prevViewHandler}>
+          <FiChevronLeft />
+        </button>
+        <button className="next" onClick={nextViewHandler}>
+          <FiChevronRight />
+        </button>
       </div>
-
-      <button type="button" className="btn">
-        more info
-      </button>
     </section>
   );
 }
