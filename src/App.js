@@ -1,74 +1,52 @@
-import React, { useState, useEffect } from "react";
-import { FiChevronRight, FiChevronLeft } from "react-icons/fi";
-import { FaQuoteRight } from "react-icons/fa";
+import React, { useState } from "react";
 import data from "./data";
 
 function App() {
-  const [people, setPeople] = useState(data);
-  const [index, setIndex] = useState(0);
+  const [number, setNumber] = useState(0);
+  const [text, setText] = useState([]);
 
-  useEffect(() => {
-    const lastIndex = people.length - 1;
-
-    if (index < 0) setIndex(lastIndex);
-    if (index > lastIndex) setIndex(0);
-  }, [index, people]);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setIndex(index + 1);
-    }, 3000);
-
-    return () => clearInterval(timer);
-  }, [index]);
-
-  const prevViewHandler = () => {
-    setIndex(index - 1);
+  const changeNumberHandler = (e) => {
+    setNumber(e.target.value);
   };
 
-  const nextViewHandler = () => {
-    setIndex(index + 1);
+  const submitFormHandler = (e) => {
+    e.preventDefault();
+
+    // Because typeof value we get from input is always always 'string'.
+    if (+number < 2) {
+      setText([data[0]]);
+      return;
+    }
+    if (+number > data.length - 1) {
+      setText(data);
+      return;
+    }
+    setText(data.slice(0, +number));
   };
 
   return (
-    <section className="section">
-      {/* title */}
-      <div className="title">
-        <h2>
-          <span>/</span>
-          reviews
-        </h2>
-      </div>
+    <section className="section-center">
+      <h3>TIRED OF BORING LOREM IPSUM?</h3>
 
-      {/* slider */}
-      <div className="section-center">
-        {people.map((person, indexPerson) => {
-          const { id, image, name, title, quote } = person;
+      <form className="lorem-form" onSubmit={submitFormHandler}>
+        <label htmlFor="amount">Paragraphs:</label>
+        <input
+          type="number"
+          id="amount"
+          name="amount"
+          value={number}
+          onChange={changeNumberHandler}
+        />
+        <button type="submit" className="btn">
+          generate
+        </button>
+      </form>
 
-          // dynamic style
-          let position = "nextSlide";
-          if (indexPerson === index) position = "activeSlide";
-          if (indexPerson === index - 1 || (index === 0 && indexPerson === people.length - 1))
-            position = "lastSlide";
-
-          return (
-            <article key={id} className={position}>
-              <img src={image} alt={name} className="person-img" />
-              <h4>{name}</h4>
-              <p className="title">{title}</p>
-              <p className="text">{quote}</p>
-              <FaQuoteRight className="icon" />
-            </article>
-          );
+      <article className="lorem-text">
+        {text.map((item, index) => {
+          return <p key={index}>{item}</p>;
         })}
-
-        <button className="prev" onClick={prevViewHandler}>
-          <FiChevronLeft />
-        </button>
-        <button className="next" onClick={nextViewHandler}>
-          <FiChevronRight />
-        </button>
-      </div>
+      </article>
     </section>
   );
 }
