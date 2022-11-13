@@ -1,53 +1,58 @@
 import React, { useState } from "react";
-import data from "./data";
+import SingleColor from "./SingleColor";
+
+import Values from "values.js"; // new Values() returns a list
 
 function App() {
-  const [number, setNumber] = useState(0);
-  const [text, setText] = useState([]);
+  const [color, setColor] = useState("");
+  const [list, setList] = useState(new Values("#f15090").all(10));
+  const [isError, setIsError] = useState(false);
 
-  const changeNumberHandler = (e) => {
-    setNumber(e.target.value);
+  const changeHandler = (e) => {
+    setIsError(false);
+    setColor(e.target.value);
   };
 
-  const submitFormHandler = (e) => {
+  const submitHandler = (e) => {
     e.preventDefault();
 
-    // Because typeof value we get from input is always always 'string'.
-    if (+number < 2) {
-      setText([data[0]]);
-      return;
+    try {
+      const colors = new Values(color).all(10); // colors returns an array
+      setList(colors);
+    } catch (error) {
+      // This error comes from the library, it checks the input values itself.
+      setIsError(true);
+      console.log(error.message);
     }
-    if (+number > data.length - 1) {
-      setText(data);
-      return;
-    }
-    setText(data.slice(0, +number));
   };
 
   return (
-    <section className="section-center">
-      <h3>TIRED OF BORING LOREM IPSUM?</h3>
+    <>
+      <section className="container">
+        <h3>color generator</h3>
 
-      <form className="lorem-form" onSubmit={submitFormHandler}>
-        <label htmlFor="amount">Paragraphs:</label>
-        <input
-          type="number"
-          id="amount"
-          name="amount"
-          value={number}
-          onChange={changeNumberHandler}
-        />
-        <button type="submit" className="btn">
-          generate
-        </button>
-      </form>
+        <form onSubmit={submitHandler}>
+          <input
+            type="text"
+            placeholder="#f15060"
+            value={color}
+            onChange={changeHandler}
+            className={`${isError ? "error" : null}`}
+          />
+          <button type="submit" className="btn">
+            submit
+          </button>
+        </form>
+      </section>
 
-      <article className="lorem-text">
-        {text.map((item, index) => {
-          return <p key={index}>{item}</p>;
+      <section className="colors">
+        {list.map((color, index) => {
+          console.log(color);
+
+          return <SingleColor key={index} {...color} index={index} hexColor={color.hex} />;
         })}
-      </article>
-    </section>
+      </section>
+    </>
   );
 }
 
